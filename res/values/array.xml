@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="contactChoice">  
+        <item>Edit Contact</item>  
+        <item>Delete Contact</item>  
+    </string-array> 
+</resources>
