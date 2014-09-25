@@ -11,5 +11,7 @@
     <string name="action_cancel">Cancel</string>
     <string name="action_done">Done</string>
     <string name="coming_phone_no">Incoming no:</string>
+    <string name="action_edit_contact">Edit</string>
+    <string name="action_delete_contact">Delete</string>
 
 </resources>

@@ -54,7 +54,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 //                int duration = Toast.LENGTH_LONG;
 //                Toast toast = Toast.makeText(mContext, msg, duration);
 //                toast.show();
-                mServiceIntent = new Intent(mContext, MyService.class)
+                mServiceIntent = new Intent(mContext, NotificationService.class)
                         .putExtra("phoneNum", incomingNumber);
 
                 mContext.startService(mServiceIntent);

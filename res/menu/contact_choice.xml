@@ -1,0 +1,13 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:TestApp="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/actionEdit" 
+        android:title="@string/action_edit_contact"
+        TestApp:showAsAction="always"/>
+    
+    <item
+        android:id="@+id/actionDelete"
+        android:title="@string/action_delete_contact"
+        TestApp:showAsAction="always"/>
+
+</menu>

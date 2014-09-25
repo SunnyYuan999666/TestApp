@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,43 +26,34 @@ public class MainActivity extends ActionBarActivity implements
         ContactsListFragment.OnHeadlineSelectedListener {
     private Context mContext;
     private static final String TAG = "MAINACTIVITY";
-    static ContactsListFragment mContactsListFragment;
+    public static ContactsListFragment mContactsListFragment;
     DetailFragment mDetailFragment;
-    Boolean mIsLargeScreen = false, mIsCangeMenu = false;
-    static final int UPDATECONTACTCODE = 123;
+    public static Boolean mIsLargeScreen = false;
+    Boolean mIsCangeMenu = false;
+    Boolean mIsFromInsertContactActivity = false ;
+    public static final int UPDATECONTACTCODE = 123;
     public static final int INSERTCONTACTCODE = 456;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.e(TAG, "onCreate");
+        Log.e(TAG, "onCreate...");
+        Log.w(TAG, "Task id: " +  getTaskId());  
         setContentView(R.layout.activity_main);
         mContext = getApplicationContext();
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        int width = 0;
-        int height = 0;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            display.getSize(size);
-            width = size.x;
-            height = size.y;
-        } else {
 
-            width = display.getWidth();
-            height = display.getHeight();
-        }
-        Log.e(TAG, "width: " + width + "   height: " + height);
-        if (width < 1024)
-            mIsLargeScreen = false;
-        else
+        if (((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE)
+                || ((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE)) {
             mIsLargeScreen = true;
+        } else
+            mIsLargeScreen = false;
 
+        mContactsListFragment = new ContactsListFragment();
         if (findViewById(R.id.container) != null) {
             if (savedInstanceState != null) {
                 return;
             }
 
-            mContactsListFragment = new ContactsListFragment();
             mContactsListFragment.setArguments(getIntent().getExtras());
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, mContactsListFragment).commit();
@@ -69,67 +61,93 @@ public class MainActivity extends ActionBarActivity implements
         }
 
     }
+    
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        // TODO Auto-generated method stub
+        super.onNewIntent(intent);
+        Log.e(TAG, "onNewIntent...");
+        Bundle bundle = intent.getExtras();
+        if (null != bundle) {
+            Log.e(TAG, "onNewIntent: null != bundle");
+            mIsFromInsertContactActivity = bundle.getBoolean(
+                    "isInsertContactActivity", false);
+            if (mIsFromInsertContactActivity) {
+                String cId = bundle.getString("cId");
+                Log.e(TAG, "mIsFromInsertContactActivity == true -> cId:" + cId);
+                mContactsListFragment.initContactsListFragment();
+                initDetailFragment(-1,
+                        ContactsImplement.getContact(mContext, cId));
+                bundle.putBoolean("isInsertContactActivity", false);
+            }
+
+        }else{
+            mIsFromInsertContactActivity= false;
+            Log.e(TAG, "onNewIntent: mIsFromInsertContactActivity == false" );
+        }
+    }
+
 
     @Override
     protected void onStart() {
         // TODO Auto-generated method stub
         super.onStart();
-        Log.e(TAG, "onStart");
+        Log.e(TAG, "onStart...");
 
     }
 
     @Override
-    public void onItemSelected(int position, ContactModle c) {
+    protected void onResume() {
+        // TODO Auto-generated method stub
+        super.onResume();
+        Log.e(TAG, "onResume...");
+    }
+
+    @Override
+    public void onItemSelected(int position, ContactModle cm) {
         Log.e(TAG, "onItemSelected");
         mIsCangeMenu = true;
         // TODO Auto-generated method stub
         // Toast.makeText(mContext, String.valueOf(position),
         // Toast.LENGTH_SHORT).show();
-        initDetailFragment(position, c);
+        initDetailFragment(position, cm);
     }
 
     @Override
     // item 0:Edit,1:Delete
-    public void onContactDialogSelected(int item, ContactModle c, int position) {
+    public void onContactDialogSelected(int item, ContactModle cm, int position) {
         // TODO Auto-generated method stub
-        // Toast.makeText(
-        // mContext,
-        // "onContactDialogSelected: " + item + "\n" + "contact id"
-        // + c.getId(), Toast.LENGTH_SHORT).show();
-
+       
         if (item == 1) {
-            Log.e(TAG, "onContactDialogSelected(Delete) id: " + c.getId());
+            Log.e(TAG, "onContactDialogSelected(Delete) id: " + cm.getId());
             ArrayList<ContactModle> contacts = ContactsImplement
                     .fetchContacts(mContext);
 
-            ContactsImplement.deleteContact(mContext, c.getId());
+            ContactsImplement.deleteContact(mContext, cm.getId());
             Log.e(TAG, "position: " + position);
-            if (position > 0) {
-                initDetailFragment(position - 1, contacts.get(position - 1));
-                // Log.e(TAG,
-                // "get(position-1): "+contacts.get(position-1).getContactName());
-                // mDetailFragment.updateFrag2View(position-1,
-                // contacts.get(position-1));
-            } else {
-                contacts = ContactsImplement.fetchContacts(mContext);
-                if (contacts.size() != 0) {
-                    initDetailFragment(0, contacts.get(0));
-                } else
-                    initDetailFragment(-1, null);
+            if (mIsLargeScreen) {
+                if (position > 0) {
+                    initDetailFragment(position - 1, contacts.get(position - 1));
+                  
+                } else {
+                    contacts = ContactsImplement.fetchContacts(mContext);
+                    if (contacts.size() != 0) {
+                        initDetailFragment(0, contacts.get(0));
+                    } else
+                        initDetailFragment(-1, null);
 
+                }
             }
+
             mContactsListFragment.initContactsListFragment();
 
         } else if (item == 0) {
-            Log.e(TAG, "onContactDialogSelected(Edit) id: " + c.getId());
+            Log.e(TAG, "onContactDialogSelected(Edit) id: " + cm.getId());
             Intent i = new Intent(MainActivity.this,
                     UpdateContactActivity.class);
-            i.putExtra("id", c.getId());
+            i.putExtra("id", cm.getId());
             startActivityForResult(i, UPDATECONTACTCODE);
-
-            // ContactsImplement.updateContact(mContext, c);
-            // mContactsListFragment.initContactsListFragment();
-            //
         }
 
     }
@@ -142,19 +160,23 @@ public class MainActivity extends ActionBarActivity implements
 
     }
 
-    public void initDetailFragment(int position, ContactModle c) {
-        mDetailFragment = (DetailFragment) getSupportFragmentManager().findFragmentById(
-                R.id.detail_fragment);
+    public void initDetailFragment(int position, ContactModle cm) {
+        // Capture the Detail fragment from the activity layout
+        mDetailFragment = (DetailFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.detail_fragment);
+        // If Detail frag is available, we're in two-pane layout...
         if (mDetailFragment != null) {
-            mDetailFragment.updateFrag2View(position, c);
+            mDetailFragment.updateFrag2View(position, cm);
         } else {
-            Log.i(TAG, "DetailFragment == null");
+            // If the frag is not available, we're in the one-pane layout and
+            // must swap frags...
+            Log.e(TAG, "DetailFragment == null");
 
             // DetailFragment newFragment = new DetailFragment();
             mDetailFragment = new DetailFragment();
-            if (c != null) {
+            if (cm != null) {
                 Bundle args = new Bundle();
-                args.putString(DetailFragment.FRG2_CONTACT_ID, c.getId());
+                args.putString(DetailFragment.FRG2_CONTACT_ID, cm.getId());
                 mDetailFragment.setArguments(args);
             }
 
@@ -162,11 +184,9 @@ public class MainActivity extends ActionBarActivity implements
                     .beginTransaction();
             transaction.replace(R.id.container, mDetailFragment);
             transaction.addToBackStack(null);
-
             transaction.commit();
         }
 
-        // Log.i(TAG, "DetailFragment != null");
 
     }
 
@@ -174,7 +194,7 @@ public class MainActivity extends ActionBarActivity implements
     protected void onActivityResult(int reqCode, int resultCode, Intent data) {
         // TODO Auto-generated method stub
         super.onActivityResult(reqCode, resultCode, data);
-        Log.v(TAG, "onActivityResult");
+        Log.e(TAG, "onActivityResult...");
         switch (reqCode) {
         case INSERTCONTACTCODE:
             if (resultCode == RESULT_OK) {
@@ -183,7 +203,8 @@ public class MainActivity extends ActionBarActivity implements
                 String cId = bundle.getString("cId");
                 mContactsListFragment.initContactsListFragment();
                 Log.e(TAG, "INSERTCONTACTCODE cId:" + cId);
-                initDetailFragment(-1, ContactsImplement.getContact(mContext, cId));
+                initDetailFragment(-1,
+                        ContactsImplement.getContact(mContext, cId));
             }
             break;
         case UPDATECONTACTCODE:
@@ -192,7 +213,8 @@ public class MainActivity extends ActionBarActivity implements
                 Bundle bundle = data.getExtras();
                 String cId = bundle.getString("cId");
                 mContactsListFragment.initContactsListFragment();
-                initDetailFragment(-1, ContactsImplement.getContact(mContext, cId));
+                initDetailFragment(-1,
+                        ContactsImplement.getContact(mContext, cId));
             }
             break;
         default:
@@ -202,9 +224,48 @@ public class MainActivity extends ActionBarActivity implements
     }
 
     @Override
+    protected void onResumeFragments() {
+        // TODO Auto-generated method stub
+        super.onResumeFragments();
+        Log.e(TAG, "onResumeFragments...");
+//        Bundle bundle = getIntent().getExtras();
+//        if (null != bundle) {
+//            Log.e(TAG, "onResumeFragments: null != bundle");
+//            mIsFromInsertContactActivity = bundle.getBoolean(
+//                    "isInsertContactActivity", false);
+//            if (mIsFromInsertContactActivity) {
+//                String cId = bundle.getString("cId");
+//                Log.e(TAG, "mIsFromInsertContactActivity == true -> cId:" + cId);
+//                
+//                mContactsListFragment.initContactsListFragment();
+//               
+//                initDetailFragment(-1,
+//                        ContactsImplement.getContact(mContext, cId));
+//                bundle.putBoolean("isInsertContactActivity", false);
+//            }
+//
+//        }else{
+//            mIsFromInsertContactActivity= false;
+//            Log.e(TAG, "mIsFromInsertContactActivity == false" );
+//        }
+    }
+
+    @Override
+    protected void onPause() {
+        // TODO Auto-generated method stub
+        if(mIsFromInsertContactActivity){
+            System.exit(0);
+        }
+        super.onPause();
+        
+    }
+
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         // TODO Auto-generated method stub
         super.onSaveInstanceState(outState);
+        Log.e(TAG, "onSaveInstanceState...");
     }
 
 }

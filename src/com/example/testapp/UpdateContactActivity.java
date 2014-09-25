@@ -21,12 +21,13 @@ public class UpdateContactActivity extends Activity {
     EditText mName, mPhoneNum, mEmail;
     String mContactId;
     Boolean mIsMenuEnable;
-    private static final String ISMENUENABLED = "ISMENUENABLED";
+    private static final String IS_MENU_ENABLED = "ISMENUENABLED";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
+        Log.w(TAG, "Task id: " +  getTaskId());  
         mContext = this;
         setContentView(R.layout.edit_contact_file);
         mName = (EditText) findViewById(R.id.editName);
@@ -42,7 +43,7 @@ public class UpdateContactActivity extends Activity {
         mEmail.setText(editedContact.getContactEmail());
         mName.requestFocus();
         if (savedInstanceState != null)
-            mIsMenuEnable = savedInstanceState.getBoolean(ISMENUENABLED, true);
+            mIsMenuEnable = savedInstanceState.getBoolean(IS_MENU_ENABLED, true);
     }
     
     @Override
@@ -72,7 +73,7 @@ public class UpdateContactActivity extends Activity {
 
             }
         });
-        Log.e(TAG, "onStart");
+        Log.e(TAG, "onStart...");
     }
 
     @Override
@@ -98,11 +99,11 @@ public class UpdateContactActivity extends Activity {
         // TODO Auto-generated method stub
         switch (item.getItemId()) {
         case R.id.actionEditdone:
-            ContactModle cMl = getEditContact();
-            ContactsImplement.updateContact(mContext, cMl);
+            ContactModle cml= getEditContact();
+            ContactsImplement.updateContact(mContext, cml);
             Intent intent = new Intent(UpdateContactActivity.this,
                     MainActivity.class);
-            intent.putExtra("cId", cMl.getId());
+            intent.putExtra("cId", cml.getId());
             setResult(RESULT_OK, intent);
             finish();
 
@@ -117,26 +118,26 @@ public class UpdateContactActivity extends Activity {
     }
 
     public ContactModle getEditContact() {
-        ContactModle cM = new ContactModle();
-        cM.setId(mContactId);
+        ContactModle cm = new ContactModle();
+        cm.setId(mContactId);
         if (!mName.getText().toString().equals("")) {
-            cM.setContactName(mName.getText().toString());
+            cm.setContactName(mName.getText().toString());
         }
         if (!mPhoneNum.getText().toString().equals("")) {
-            cM.setContactPhoneNum(mPhoneNum.getText().toString());
+            cm.setContactPhoneNum(mPhoneNum.getText().toString());
         }
         if (!mEmail.getText().toString().equals("")) {
-            cM.setContactEmail(mEmail.getText().toString());
+            cm.setContactEmail(mEmail.getText().toString());
         }
 
-        return cM;
+        return cm;
     }
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         // TODO Auto-generated method stub
         super.onSaveInstanceState(outState);
         if (mMenu != null) {
-            outState.putBoolean(ISMENUENABLED, mMenu.getItem(0).isEnabled());
+            outState.putBoolean(IS_MENU_ENABLED, mMenu.getItem(0).isEnabled());
         }
     }
 }

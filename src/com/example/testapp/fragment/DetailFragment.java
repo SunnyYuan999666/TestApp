@@ -1,13 +1,18 @@
 package com.example.testapp.fragment;
 
+import com.example.testapp.MainActivity;
 import com.example.testapp.R;
+import com.example.testapp.UpdateContactActivity;
 import com.example.testapp.modle.ContactModle;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -21,6 +26,8 @@ public class DetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
+        Log.e(TAG, "onCreate...");
+        setHasOptionsMenu(true);
 
     }
 
@@ -33,36 +40,72 @@ public class DetailFragment extends Fragment {
             mCurrentPositionID = savedInstanceState.getString(FRG2_CONTACT_ID);
 
         }
-        return inflater.inflate(R.layout.detail_fragment_view, container, false);
+        return inflater
+                .inflate(R.layout.detail_fragment_view, container, false);
     }
 
     @Override
     public void onStart() {
         // TODO Auto-generated method stub
         super.onStart();
-        Log.i(TAG, "onStart");
+        Log.e(TAG, "onStart...");
         Bundle args = getArguments();
         if (args != null) {
-            Log.i(TAG, "args != null");
+            Log.e(TAG, "args != null");
             String id = args.getString(FRG2_CONTACT_ID);
             updateFrag2View(-1, ContactsImplement.getContact(getActivity(), id));
         } else if (mCurrentPositionID != null) {
 
-            Log.w(TAG, mCurrentPositionID);
+            Log.e(TAG, mCurrentPositionID);
             updateFrag2View(-1, ContactsImplement.getContact(getActivity(),
                     mCurrentPositionID));
         }
     }
 
     @Override
-	public void onPrepareOptionsMenu(Menu menu) {
-		// TODO Auto-generated method stub
-    	Log.e(TAG, "onPrepareOptionsMenu");
-    	menu.clear();
-		super.onPrepareOptionsMenu(menu);
-	}
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // TODO Auto-generated method stub
+        if (!MainActivity.mIsLargeScreen) {
+            Log.e(TAG, "onCreateOptionsMenu...");
 
-	public void updateFrag2View(int position, ContactModle c) {
+            inflater.inflate(R.menu.contact_choice, menu);
+        }
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        // TODO Auto-generated method stub
+        Log.e(TAG, "onPrepareOptionsMenu...");
+        // menu.clear();
+        super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // TODO Auto-generated method stub
+        switch (item.getItemId()) {
+        case R.id.actionDelete:
+            Log.e(TAG, "action Delete");
+            ContactsImplement.deleteContact(getActivity(), mCurrentPositionID);
+            MainActivity.mContactsListFragment.initContactsListFragment();
+            getActivity().getSupportFragmentManager().popBackStack();
+
+            break;
+        case R.id.actionEdit:
+            Log.e(TAG, "action Edit");
+            Intent i = new Intent(getActivity(), UpdateContactActivity.class);
+            i.putExtra("id", mCurrentPositionID);
+            startActivityForResult(i, MainActivity.UPDATECONTACTCODE);
+            break;
+        default:
+            break;
+        }
+        return super.onOptionsItemSelected(item);
+
+    }
+
+    public void updateFrag2View(int position, ContactModle cm) {
 
         TextView name = (TextView) getActivity()
                 .findViewById(R.id.ContactsName);
@@ -70,20 +113,20 @@ public class DetailFragment extends Fragment {
                 R.id.ContactsPhoneNum);
         TextView email = (TextView) getActivity().findViewById(
                 R.id.ContactsEmail);
-       if(c!=null){
-           //Log.e(TAG, "ContactModle c!=null");
-           name.setText(c.getContactName());
-           phoneNum.setText(c.getContactPhoneNum());
-           email.setText(c.getContactEmail());
-           // Log.i(TAG, c.getContactPhoneNum());
-           mCurrentPositionID = c.getId();
-       }else{
-           //Log.e(TAG, "ContactModle c==null");
-           name.setHint(getString(R.string.name));
-           phoneNum.setHint(getString(R.string.phoneNum));
-           email.setHint(getString(R.string.email));
-       }
-        
+        if (cm != null) {
+            // Log.e(TAG, "ContactModle c!=null");
+            name.setText(cm.getContactName());
+            phoneNum.setText(cm.getContactPhoneNum());
+            email.setText(cm.getContactEmail());
+            // Log.e(TAG, c.getContactPhoneNum());
+            mCurrentPositionID = cm.getId();
+        } else {
+            Log.e(TAG, "ContactModle c==null");
+            name.setText("");
+            phoneNum.setText("");
+            email.setText("");
+        }
+
     }
 
     @Override

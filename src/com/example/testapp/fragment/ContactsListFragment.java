@@ -2,7 +2,6 @@ package com.example.testapp.fragment;
 
 import java.util.ArrayList;
 
-
 import com.example.testapp.R;
 import com.example.testapp.modle.ContactModle;
 
@@ -31,17 +30,19 @@ import android.app.AlertDialog.Builder;
 
 public class ContactsListFragment extends Fragment {
     private static final String TAG = "ContactsListFragment";
-    private Context mContext;
-    private ListView mContactsListView;
+    private static Context mContext;
+    private static ListView mContactsListView;
     static ArrayList<ContactModle> mContacts = null;
-    OnHeadlineSelectedListener mCallback;
+    static OnHeadlineSelectedListener mCallback;
 
     public interface OnHeadlineSelectedListener {
         /** Called by Fragment1 when a list item is selected */
         public void onItemSelected(int position, ContactModle c);
-        //item 0:Edit,1:Delete
-        public void onContactDialogSelected(int item, ContactModle c,int position); 
-        
+
+        // item 0:Edit,1:Delete
+        public void onContactDialogSelected(int item, ContactModle c,
+                int position);
+
         public void onStartInsertContactActivity();
 
     }
@@ -49,12 +50,12 @@ public class ContactsListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
-        super.onCreate(savedInstanceState); 
+        super.onCreate(savedInstanceState);
         mContext = getActivity();
-        //mContactsListView = (ListView) getActivity().findViewById(
-                //R.id.listViewContacts);
-       
-        Log.e(TAG, "onCreate");
+        // mContactsListView = (ListView) getActivity().findViewById(
+        // R.id.listViewContacts);
+
+        Log.e(TAG, "onCreate...");
 
     }
 
@@ -62,7 +63,8 @@ public class ContactsListFragment extends Fragment {
     public void onAttach(Activity activity) {
         // TODO Auto-generated method stub
         super.onAttach(activity);
-        Log.e(TAG, "onAttach");
+        Log.e(TAG, "onAttach...");
+        // mContext = activity.;
         try {
             mCallback = (OnHeadlineSelectedListener) activity;
         } catch (ClassCastException e) {
@@ -75,76 +77,141 @@ public class ContactsListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         // TODO Auto-generated method stub
-    	 Log.e(TAG, "onCreateView");
-    	 setHasOptionsMenu(true);
-        return inflater.inflate(R.layout.contacts_list_fragment_view, container, false);
+        Log.e(TAG, "onCreateView...");
+        setHasOptionsMenu(true);
+
+        return inflater.inflate(R.layout.contacts_list_fragment_view,
+                container, false);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
         super.onActivityCreated(savedInstanceState);
-        Log.e(TAG, "onActivityCreated");
-        initContactsListFragment();
+        Log.e(TAG, "onActivityCreated...");
+        if (null == mContacts)
+            initContactsListFragment();
+        else
+            setContactsListFragment();
 
     }
-    
 
     @Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-    	 Log.e(TAG, "onCreateOptionsMenu");
-		// TODO Auto-generated method stub
-    	inflater.inflate(R.menu.main, menu);
-    	super.onCreateOptionsMenu(menu,inflater);
-	}
+    public void onResume() {
+        // TODO Auto-generated method stub
+        super.onResume();
+        Log.e(TAG, "onResume...");
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// TODO Auto-generated method stub
-		switch (item.getItemId()) {
-		case R.id.action_settings:
-			// ContactsImplement.deleteContact(mContext, Integer.toString(5));
-		    initContactsListFragment();
-			break;
-		case R.id.actionAddContact:
-		    mCallback.onStartInsertContactActivity();
-			break;
-		default:
-			break;
-		}
-		return super.onOptionsItemSelected(item);
-	}
+    }
 
-	@Override
-	public void onPrepareOptionsMenu(Menu menu) {
-		// TODO Auto-generated method stub
-		super.onPrepareOptionsMenu(menu);
-	}
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        Log.e(TAG, "onCreateOptionsMenu...");
+        // TODO Auto-generated method stub
+        inflater.inflate(R.menu.main, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
 
-	public void initContactsListFragment() {
-	    ArrayList<ContactModle> mcTest = ContactsImplement.fetchContacts2(mContext);
-        mContacts = ContactsImplement.fetchContacts(mContext);
-        if(((Activity) mContext).findViewById(R.id.listViewContacts) != null){
-        	mContactsListView = (ListView) getActivity().findViewById(
-                    R.id.listViewContacts);
-        	 Log.e(TAG, "R.id.listViewContacts) != null");
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        // TODO Auto-generated method stub
+        super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // TODO Auto-generated method stub
+        switch (item.getItemId()) {
+        case R.id.action_settings:
+
+            initContactsListFragment();
+            break;
+        case R.id.actionAddContact:
+            mCallback.onStartInsertContactActivity();
+            break;
+        default:
+            break;
         }
-       
-        if (mContacts != null && getActivity()!=null) {
-            Log.w(TAG, "mContacts != null&& getActivity()!=null");
-           
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onPause() {
+        // TODO Auto-generated method stub
+        super.onPause();
+        Log.e(TAG, "onPause...");
+
+    }
+
+    @Override
+    public void onStop() {
+        // TODO Auto-generated method stub
+        super.onStop();
+        Log.e(TAG, "onStop...");
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        // TODO Auto-generated method stub
+        super.onSaveInstanceState(outState);
+        Log.e(TAG, "onSaveInstanceState...");
+    }
+
+    public void initContactsListFragment() {
+        if (mContext != null)
+            mContacts = ContactsImplement.fetchContacts(mContext);
+        else
+            Log.e(TAG, "mContext==null");
+        
+        setContactsListFragment();
+        // if (mContacts != null && mContext != null) {
+        // Log.e(TAG, "mContacts != null&& getActivity()!=null");
+        //
+        // ContactsListViewAdapter contactListViewAdapter = new
+        // ContactsListViewAdapter(
+        // mContext, mContacts);
+        // mContactsListView.setAdapter(contactListViewAdapter);
+        // mContactsListView.setOnItemClickListener(new OnItemClickListener() {
+        // public void onItemClick(AdapterView<?> a, View v, int position,
+        // long id) {
+        // // TODO Auto-generated method stub
+        // mCallback.onItemSelected(position, mContacts.get(position));
+        //
+        //
+        // }
+        // });
+        // mContactsListView
+        // .setOnItemLongClickListener(new OnItemLongClickListener() {
+        // public boolean onItemLongClick(AdapterView<?> parent,
+        // View view, int position, long id) {
+        //
+        // ContactModle c = mContacts.get(position);
+        // contactDialog(c, position).show();
+        // return true;
+        // }
+        // });
+        // } else
+        // Log.e(TAG, "no contacts");
+
+    }
+
+    public void setContactsListFragment() {
+        if (((Activity) mContext).findViewById(R.id.listViewContacts) != null) {
+            mContactsListView = (ListView) ((Activity) mContext)
+                    .findViewById(R.id.listViewContacts);
+            Log.e(TAG, "R.id.listViewContacts) != null");
+        }
+        if (mContacts != null && mContext != null) {
+            Log.e(TAG, "mContacts != null&& getActivity()!=null");
 
             ContactsListViewAdapter contactListViewAdapter = new ContactsListViewAdapter(
-                    getActivity(), mContacts);
+                    mContext, mContacts);
             mContactsListView.setAdapter(contactListViewAdapter);
             mContactsListView.setOnItemClickListener(new OnItemClickListener() {
                 public void onItemClick(AdapterView<?> a, View v, int position,
                         long id) {
                     // TODO Auto-generated method stub
                     mCallback.onItemSelected(position, mContacts.get(position));
-                    // Log.i(TAG, mContacts.get(position).getContactName());
-                    // Log.i(TAG, mContacts.get(position).getContactPhoneNum());
-                    // mContactsListView.setItemChecked(position, true)
 
                 }
             });
@@ -152,36 +219,37 @@ public class ContactsListFragment extends Fragment {
                     .setOnItemLongClickListener(new OnItemLongClickListener() {
                         public boolean onItemLongClick(AdapterView<?> parent,
                                 View view, int position, long id) {
-//                            Toast.makeText(mContext,
-//                                    "LongClicked: " + position,
-//                                    Toast.LENGTH_SHORT).show();
-                            
+
                             ContactModle c = mContacts.get(position);
                             contactDialog(c, position).show();
                             return true;
                         }
                     });
         } else
-            Log.w(TAG, "no contacts");
+            Log.e(TAG, "no contacts");
 
     }
 
-    public Dialog contactDialog(final ContactModle cM,final int position) {
+    public Dialog contactDialog(final ContactModle cm, final int position) {
         Dialog dialog = new Dialog(mContext);
         Builder builder = new AlertDialog.Builder(mContext);
-        builder.setTitle(cM.getContactName());
+        builder.setTitle(cm.getContactName());
+        // if(isAdded())
 
-        builder.setItems(getResources().getStringArray(R.array.contactChoice),
+        builder.setItems(
+                mContext.getResources().getStringArray(R.array.contactChoice),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
-//                        Toast.makeText(mContext,
-//                              "Dialog: " + item,
-//                              Toast.LENGTH_SHORT).show();
-                        mCallback.onContactDialogSelected(item, cM,position);
-                        
+                        // Toast.makeText(mContext,
+                        // "Dialog: " + item,
+                        // Toast.LENGTH_SHORT).show();
+                        if (mCallback != null)
+                            mCallback.onContactDialogSelected(item, cm,
+                                    position);
+
                     }
                 });
-        dialog = builder.create();  
+        dialog = builder.create();
         return dialog;
     }
 
@@ -213,10 +281,10 @@ public class ContactsListFragment extends Fragment {
         @Override
         public View getView(int i, View cv, ViewGroup arg2) {
             // TODO Auto-generated method stub
-            TagHold hold ;
+            TagHold hold;
             ContactModle cM = contactsList.get(i);
             if (cv == null) {
-               
+
                 hold = new TagHold();
                 cv = ly.inflate(R.layout.listview_item, null);
 
@@ -226,7 +294,6 @@ public class ContactsListFragment extends Fragment {
                 // .findViewById(R.id.ContactsPhoneNum);
                 // hold.email = (TextView) cv.findViewById(R.id.ContactsEmail);
 
-                
                 // hold.phoneNum.setText(cM.getContactPhoneNum());
                 // hold.email.setText(cM.getContactEmail());
                 cv.setTag(hold);
