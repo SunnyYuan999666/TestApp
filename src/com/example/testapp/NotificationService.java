@@ -98,14 +98,17 @@ public class NotificationService extends IntentService {
 
     public boolean isExistPhoneNumber(String incomingNumber) {
         Log.e(TAG, "in isExistPhoneNumber()");
-        ArrayList<ContactModle> contacts = ContactsImplement
-                .fetchContacts(this);
-        for (int i = 0; i < contacts.size(); i++) {
-            if (null != contacts.get(i).getContactPhoneNum()
-                    && contacts.get(i).getContactPhoneNum()
-                            .equals(incomingNumber))
-                return true;
-        }
+        if(null != ContactsImplement.rowIdOfExistPhoneNum(this,incomingNumber))
+            return true;
+        
+//        ArrayList<ContactModle> contacts = ContactsImplement
+//                .fetchContacts(this);
+//        for (int i = 0; i < contacts.size(); i++) {
+//            if (null != contacts.get(i).getContactPhoneNum()
+//                    && contacts.get(i).getContactPhoneNum()
+//                            .equals(incomingNumber))
+//                return true;
+//        }
 
         return false;
 

@@ -77,7 +77,6 @@ public class DetailFragment extends Fragment {
     public void onPrepareOptionsMenu(Menu menu) {
         // TODO Auto-generated method stub
         Log.e(TAG, "onPrepareOptionsMenu...");
-        // menu.clear();
         super.onPrepareOptionsMenu(menu);
     }
 
@@ -88,7 +87,7 @@ public class DetailFragment extends Fragment {
         case R.id.actionDelete:
             Log.e(TAG, "action Delete");
             ContactsImplement.deleteContact(getActivity(), mCurrentPositionID);
-            MainActivity.mContactsListFragment.initContactsListFragment();
+            //MainActivity.mContactsListFragment.initContactsListFragment();
             getActivity().getSupportFragmentManager().popBackStack();
 
             break;

@@ -76,7 +76,7 @@ public class MainActivity extends ActionBarActivity implements
             if (mIsFromInsertContactActivity) {
                 String cId = bundle.getString("cId");
                 Log.e(TAG, "mIsFromInsertContactActivity == true -> cId:" + cId);
-                mContactsListFragment.initContactsListFragment();
+                //mContactsListFragment.initContactsListFragment();
                 initDetailFragment(-1,
                         ContactsImplement.getContact(mContext, cId));
                 bundle.putBoolean("isInsertContactActivity", false);
@@ -105,48 +105,53 @@ public class MainActivity extends ActionBarActivity implements
     }
 
     @Override
-    public void onItemSelected(int position, ContactModle cm) {
+    public void onItemSelected(int position, String rowId) {
         Log.e(TAG, "onItemSelected");
         mIsCangeMenu = true;
         // TODO Auto-generated method stub
-        // Toast.makeText(mContext, String.valueOf(position),
-        // Toast.LENGTH_SHORT).show();
-        initDetailFragment(position, cm);
+        
+        initDetailFragment(position, ContactsImplement.getContact(mContext, rowId));
     }
 
     @Override
     // item 0:Edit,1:Delete
-    public void onContactDialogSelected(int item, ContactModle cm, int position) {
+    public void onContactDialogSelected(int item, String rowId,
+            int position, String preContactRowId) {
         // TODO Auto-generated method stub
        
         if (item == 1) {
-            Log.e(TAG, "onContactDialogSelected(Delete) id: " + cm.getId());
-            ArrayList<ContactModle> contacts = ContactsImplement
-                    .fetchContacts(mContext);
+            Log.e(TAG, "onContactDialogSelected(Delete) id: " + rowId);
+//            ArrayList<ContactModle> contacts = ContactsImplement
+//                    .fetchContacts(mContext);
 
-            ContactsImplement.deleteContact(mContext, cm.getId());
+            ContactsImplement.deleteContact(mContext, rowId);
             Log.e(TAG, "position: " + position);
             if (mIsLargeScreen) {
-                if (position > 0) {
-                    initDetailFragment(position - 1, contacts.get(position - 1));
-                  
-                } else {
-                    contacts = ContactsImplement.fetchContacts(mContext);
-                    if (contacts.size() != 0) {
-                        initDetailFragment(0, contacts.get(0));
-                    } else
-                        initDetailFragment(-1, null);
-
-                }
+                if(null != preContactRowId){
+                    initDetailFragment(-1, ContactsImplement.getContact(mContext, preContactRowId));
+                    
+                }else
+                    initDetailFragment(-1, null);
+//                if (position > 0) {
+//                    initDetailFragment(position - 1, contacts.get(position - 1));
+//                  
+//                } else {
+////                    contacts = ContactsImplement.fetchContacts(mContext);
+//                    if (contacts.size() != 0) {
+//                        initDetailFragment(0, contacts.get(0));
+//                    } else
+//                        initDetailFragment(-1, null);
+//
+//                }
             }
 
-            mContactsListFragment.initContactsListFragment();
+            //mContactsListFragment.initContactsListFragment();
 
         } else if (item == 0) {
-            Log.e(TAG, "onContactDialogSelected(Edit) id: " + cm.getId());
+            Log.e(TAG, "onContactDialogSelected(Edit) id: " + rowId);
             Intent i = new Intent(MainActivity.this,
                     UpdateContactActivity.class);
-            i.putExtra("id", cm.getId());
+            i.putExtra("id", rowId);
             startActivityForResult(i, UPDATECONTACTCODE);
         }
 
@@ -201,7 +206,7 @@ public class MainActivity extends ActionBarActivity implements
                 Log.e(TAG, "INSERTCONTACTCODE " + "OK");
                 Bundle bundle = data.getExtras();
                 String cId = bundle.getString("cId");
-                mContactsListFragment.initContactsListFragment();
+                //mContactsListFragment.initContactsListFragment();
                 Log.e(TAG, "INSERTCONTACTCODE cId:" + cId);
                 initDetailFragment(-1,
                         ContactsImplement.getContact(mContext, cId));
@@ -212,7 +217,7 @@ public class MainActivity extends ActionBarActivity implements
                 Log.e(TAG, "UPDATECONTACTCODE" + "OK");
                 Bundle bundle = data.getExtras();
                 String cId = bundle.getString("cId");
-                mContactsListFragment.initContactsListFragment();
+                //mContactsListFragment.initContactsListFragment();
                 initDetailFragment(-1,
                         ContactsImplement.getContact(mContext, cId));
             }

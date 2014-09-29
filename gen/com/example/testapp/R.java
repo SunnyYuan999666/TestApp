@@ -1084,7 +1084,10 @@ containing a value of this type.
         public static final int abc_textfield_searchview_holo_light=0x7f020054;
         public static final int abc_textfield_searchview_right_holo_dark=0x7f020055;
         public static final int abc_textfield_searchview_right_holo_light=0x7f020056;
-        public static final int ic_launcher=0x7f020057;
+        public static final int ic_action_discard=0x7f020057;
+        public static final int ic_action_edit=0x7f020058;
+        public static final int ic_action_user_add=0x7f020059;
+        public static final int ic_launcher=0x7f02005a;
     }
     public static final class id {
         public static final int ContactsEmail=0x7f050046;
@@ -1092,7 +1095,7 @@ containing a value of this type.
         public static final int ContactsName=0x7f050040;
         public static final int ContactsPhoneNum=0x7f050043;
         public static final int ContactsPhoneNumString=0x7f050042;
-        public static final int actionAddContact=0x7f050053;
+        public static final int actionAddContact=0x7f050052;
         public static final int actionDelete=0x7f05004f;
         public static final int actionEdit=0x7f05004e;
         public static final int actionEditcancel=0x7f050051;
@@ -1108,7 +1111,6 @@ containing a value of this type.
         public static final int action_menu_divider=0x7f050016;
         public static final int action_menu_presenter=0x7f050017;
         public static final int action_mode_close_button=0x7f050024;
-        public static final int action_settings=0x7f050052;
         public static final int activity_chooser_view_content=0x7f050025;
         public static final int always=0x7f05000b;
         public static final int beginning=0x7f050011;
@@ -1289,6 +1291,8 @@ containing a value of this type.
         public static final int phoneNum=0x7f0a0011;
     }
     public static final class style {
+        public static final int ActionBar=0x7f0b008d;
+        public static final int ActionBar_MenuText=0x7f0b008e;
         /** 
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
@@ -1307,14 +1311,18 @@ containing a value of this type.
         Base application theme for API 14+. This theme completely replaces
         AppBaseTheme from BOTH res/values/styles.xml and
         res/values-v11/styles.xml on API 14+ devices.
+
+
     
- API 14 theme customizations can go here. 
          */
         public static final int AppBaseTheme=0x7f0b008b;
         /**  Application theme. 
  All customizations that are NOT specific to a particular API-level can go here. 
          */
         public static final int AppTheme=0x7f0b008c;
+        public static final int MyActionBar=0x7f0b008f;
+        public static final int MyActionBar_MenuTextStyle=0x7f0b0091;
+        public static final int MyActionBar_TitleTextStyle=0x7f0b0090;
         /**  Mimic text appearance in select_dialog_item.xml 
          */
         public static final int TextAppearance_AppCompat_Base_CompactMenu_Dialog=0x7f0b0063;

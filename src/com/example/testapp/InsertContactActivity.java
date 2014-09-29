@@ -174,7 +174,6 @@ public class InsertContactActivity extends Activity {
                 Log.e(TAG, "mIsFromNotification = false");
                 setResult(RESULT_OK, intent);
             }
-
             
             finish();
 
@@ -211,5 +210,18 @@ public class InsertContactActivity extends Activity {
             outState.putBoolean(IS_MENU_ENABLED, mMenu.getItem(0).isEnabled());
         }
     }
+
+
+    @Override
+    public void onBackPressed() {
+        // TODO Auto-generated method stub
+        super.onBackPressed();
+        Intent intent = new Intent(InsertContactActivity.this,
+                MainActivity.class);
+        startActivity(intent);
+        finish();
+        
+    }
+    
 
 }

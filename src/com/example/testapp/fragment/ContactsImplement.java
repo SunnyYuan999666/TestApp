@@ -111,7 +111,7 @@ public class ContactsImplement {
 
     public static void updateContact(Context c, ContactModle newCM) {
         Log.e(TAG, "updateContact id: " + newCM.getId());
-        //ContactModle preCM = getContact(c, newCM.getId());
+        // ContactModle preCM = getContact(c, newCM.getId());
         ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
 
         // Name
@@ -161,23 +161,21 @@ public class ContactsImplement {
         Log.e(TAG, "getContact");
         ContactModle cm = new ContactModle();
         ContentResolver contentResolver = c.getContentResolver();
-        
-        Cursor rawIdCursor = contentResolver.query(RawContacts.CONTENT_URI, null,
-                RawContacts._ID + " = " + id, null, null);
-        
-        if(rawIdCursor.moveToFirst()){
-            String contactId = rawIdCursor.getString(rawIdCursor
-                        .getColumnIndex(RawContacts.CONTACT_ID));
-            
-            cm.setId(id);
-            
-            Cursor contactCursor = contentResolver.query(
-                    android.provider.ContactsContract.Contacts.CONTENT_URI, mInfo,
-                    ContactsContract.Contacts._ID + " = " + contactId, null, null);
-            if (contactCursor.moveToFirst()) {
-                
-                    
 
+        Cursor rawIdCursor = contentResolver.query(RawContacts.CONTENT_URI,
+                null, RawContacts._ID + " = " + id, null, null);
+
+        if (rawIdCursor.moveToFirst()) {
+            String contactId = rawIdCursor.getString(rawIdCursor
+                    .getColumnIndex(RawContacts.CONTACT_ID));
+
+            cm.setId(id);
+
+            Cursor contactCursor = contentResolver.query(
+                    android.provider.ContactsContract.Contacts.CONTENT_URI,
+                    mInfo, ContactsContract.Contacts._ID + " = " + contactId,
+                    null, null);
+            if (contactCursor.moveToFirst()) {
 
                 cm.setContactName(contactCursor.getString(contactCursor
                         .getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)));
@@ -189,7 +187,8 @@ public class ContactsImplement {
 
                     Cursor phoneNumCursor = contentResolver.query(
                             ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                            null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID
+                            null,
+                            ContactsContract.CommonDataKinds.Phone.CONTACT_ID
                                     + " = " + contactId, null, null);
                     phoneNumCursor.moveToFirst();
                     cm.setContactPhoneNum(phoneNumCursor.getString(phoneNumCursor
@@ -199,9 +198,9 @@ public class ContactsImplement {
 
                 }
                 Cursor emailCursor = contentResolver.query(
-                        ContactsContract.CommonDataKinds.Email.CONTENT_URI, null,
-                        ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = "
-                                + contactId, null, null);
+                        ContactsContract.CommonDataKinds.Email.CONTENT_URI,
+                        null, ContactsContract.CommonDataKinds.Email.CONTACT_ID
+                                + " = " + contactId, null, null);
                 if (emailCursor.moveToNext()) {
                     // Log.e(TAG,
                     // "emailCursor.getCount(): "+emailCursor.getCount());
@@ -220,15 +219,57 @@ public class ContactsImplement {
                 emailCursor.close();
             }
             contactCursor.close();
-            
+
         }
-        rawIdCursor.close() ;
-       
-       
+        rawIdCursor.close();
 
         return cm;
     }
 
+    public static String rowIdOfExistPhoneNum(Context context, String pNum) {
+        ContentResolver contentResolver = context.getContentResolver();
+        Cursor contactCursor = contentResolver.query(
+                ContactsContract.Contacts.CONTENT_URI,
+                new String[] { ContactsContract.Contacts._ID,ContactsContract.Contacts.HAS_PHONE_NUMBER }, null, null,
+                ContactsContract.Contacts.DISPLAY_NAME
+                        + " COLLATE LOCALIZED ASC");
+        contactCursor.getCount();
+        while (contactCursor.moveToNext()) {
+            int hasPN = Integer
+                    .parseInt(contactCursor.getString(contactCursor
+                            .getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)));
+            if (1 == hasPN) {
+                int contactID = contactCursor.getInt(contactCursor
+                        .getColumnIndex(ContactsContract.Contacts._ID));
+
+                Cursor phoneNumCursor = contentResolver.query(
+                        ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                        null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID
+                                + " = " + contactID, null, null);
+                phoneNumCursor.moveToFirst();
+                if (pNum.equals(phoneNumCursor.getString(phoneNumCursor
+                        .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)))) {
+                    Cursor rawIdCursor = contentResolver.query(
+                            RawContacts.CONTENT_URI, null,
+                            RawContacts.CONTACT_ID + " = " + contactID, null,
+                            null);
+                    if (rawIdCursor.moveToFirst()) {
+
+                        return rawIdCursor.getString(rawIdCursor
+                                .getColumnIndex(RawContacts._ID));
+
+                    }
+                    rawIdCursor.close();
+
+                }
+                phoneNumCursor.close();
+
+            }
+
+        }
+        contactCursor.close();
+        return null;
+    }
 
     public static ArrayList<ContactModle> fetchContacts(Context c) {
         mContacts = new ArrayList<ContactModle>();
@@ -244,33 +285,33 @@ public class ContactsImplement {
             ContactModle cm = new ContactModle();
             int contactID = contactCursor.getInt(contactCursor
                     .getColumnIndex(ContactsContract.Contacts._ID));
-            
-            Cursor rawIdCursor = contentResolver.query(RawContacts.CONTENT_URI, null,
-                    RawContacts.CONTACT_ID + " = " + contactID, null, null);
-            if(rawIdCursor.moveToFirst()){
+
+            Cursor rawIdCursor = contentResolver.query(RawContacts.CONTENT_URI,
+                    null, RawContacts.CONTACT_ID + " = " + contactID, null,
+                    null);
+            if (rawIdCursor.moveToFirst()) {
                 String rowId = rawIdCursor.getString(rawIdCursor
                         .getColumnIndex(RawContacts._ID));
-                Log.e(TAG, "row id: "+rowId);
-                
+                // Log.e(TAG, "row id: "+rowId);
+
                 cm.setId(rowId);
-                
+
             }
             rawIdCursor.close();
-            
-//            cM.setId(contactCursor.getString(contactCursor
-//                    .getColumnIndex(ContactsContract.Contacts._ID))); // ContactsContract.Contacts._ID
-           
+
+            // cM.setId(contactCursor.getString(contactCursor
+            // .getColumnIndex(ContactsContract.Contacts._ID))); //
+            // ContactsContract.Contacts._ID
+
             cm.setContactName(contactCursor.getString(contactCursor
                     .getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)));
-          
-           // Log.e(TAG, cM.getId() + ":");
+
+            // Log.e(TAG, cM.getId() + ":");
             // Log.e(TAG, cM.getContactName());
 
             int hasPN = Integer
                     .parseInt(contactCursor.getString(contactCursor
                             .getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)));
-
-           
 
             if (1 == hasPN) {
 
@@ -306,7 +347,6 @@ public class ContactsImplement {
             }
             emailCursor.close();
 
-            
             mContacts.add(cm);
         }
         contactCursor.close();
