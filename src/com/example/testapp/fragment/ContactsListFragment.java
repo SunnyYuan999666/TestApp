@@ -10,9 +10,15 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 
 import android.provider.ContactsContract;
@@ -35,6 +41,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.app.AlertDialog.Builder;
@@ -42,6 +49,7 @@ import android.app.AlertDialog.Builder;
 public class ContactsListFragment extends Fragment implements
         LoaderCallbacks<Cursor> {
     private static final String TAG = "ContactsListFragment";
+    public final static String ITEM_CLICK_POSITION = "itemClickPosition";
     private static Context mContext;
     private static ListView mContactsListView;
     static ArrayList<ContactModle> mContacts = null;
@@ -50,13 +58,18 @@ public class ContactsListFragment extends Fragment implements
     ContactsListViewAdapter mContactListViewAdapter;
     LoaderManager mLoadermanager;
     SimpleCursorAdapter mSimpleCursorAdapter;
+    View mPreListViewItemClick;
+    int mItemClickPosition = -1;
+    int mPreItemClickPosition = -1;
+    private Boolean mIsLog = true;
 
     public interface OnHeadlineSelectedListener {
         /** Called by Fragment1 when a list item is selected */
         public void onItemSelected(int position, String rowId);
 
         // item 0:Edit,1:Delete
-        public void onContactDialogSelected(int item, String rowId, int position, String preContactRowId);
+        public void onContactDialogSelected(int item, String rowId,
+                int position, String preContactRowId);
 
         public void onStartInsertContactActivity();
 
@@ -67,8 +80,8 @@ public class ContactsListFragment extends Fragment implements
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
         mContext = getActivity();
-
-        Log.e(TAG, "onCreate...");
+        if (mIsLog)
+            Log.e(TAG, "onCreate...");
 
     }
 
@@ -76,7 +89,8 @@ public class ContactsListFragment extends Fragment implements
     public void onAttach(Activity activity) {
         // TODO Auto-generated method stub
         super.onAttach(activity);
-        Log.e(TAG, "onAttach...");
+        if (mIsLog)
+            Log.e(TAG, "onAttach...");
         // mContext = activity.;
         try {
             mCallback = (OnHeadlineSelectedListener) activity;
@@ -90,7 +104,8 @@ public class ContactsListFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         // TODO Auto-generated method stub
-        Log.e(TAG, "onCreateView...");
+        if (mIsLog)
+            Log.e(TAG, "onCreateView...");
         setHasOptionsMenu(true);
 
         return inflater.inflate(R.layout.contacts_list_fragment_view,
@@ -101,79 +116,159 @@ public class ContactsListFragment extends Fragment implements
     public void onActivityCreated(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
         super.onActivityCreated(savedInstanceState);
-        Log.e(TAG, "onActivityCreated...");
+        if (mIsLog)
+            Log.e(TAG, "onActivityCreated...");
         mLoadermanager = getLoaderManager();
-        String[] uiBindFrom = { Contacts.DISPLAY_NAME_PRIMARY };
-        int[] uiBindTo = { android.R.id.text1 };
+        String[] uiBindFrom = { Contacts.DISPLAY_NAME_PRIMARY,
+                Contacts.PHOTO_ID };
+        int[] uiBindTo = { R.id.listViewContactsName,
+                R.id.listViewContactsPhoto }; // android.R.id.text1
+
         mContactsListView = (ListView) ((Activity) mContext)
                 .findViewById(R.id.listViewContacts);
-        mSimpleCursorAdapter = new SimpleCursorAdapter(mContext,
-                android.R.layout.simple_list_item_1, null, uiBindFrom,
-                uiBindTo, 0);
-        mContactsListView.setAdapter(mSimpleCursorAdapter);
+        mContactsListView.setSelector(R.drawable.contacts_list_item_bg);
 
+        mSimpleCursorAdapter = new SimpleCursorAdapter(mContext,
+                R.layout.listview_item, null, uiBindFrom, uiBindTo, 0); // android.R.layout.simple_list_item_1
+        mContactsListView.setAdapter(mSimpleCursorAdapter);
+        // mContactsListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        mSimpleCursorAdapter
+                .setViewBinder(new SimpleCursorAdapter.ViewBinder() {
+                    /**
+                     * Binds the Cursor column defined by the specified index to
+                     * the specified view
+                     */
+                    public boolean setViewValue(View view, Cursor cursor,
+                            int columnIndex) {
+                        if (view.getId() == R.id.listViewContactsPhoto) {
+
+                            int imageDataRow = cursor.getInt(columnIndex);
+                            // Log.v(TAG, "imageDataRow: "+imageDataRow);
+                            Bitmap image = ContactsImplement.queryContactImage(
+                                    getActivity(), imageDataRow);
+
+                            ImageView iv = (ImageView) view
+                                    .findViewById(R.id.listViewContactsPhoto);
+                            if (null != image) {
+                                iv.setImageBitmap(image);
+
+                            } else {
+                                iv.setImageResource(R.drawable.ic_person_default);
+                            }
+                            return true;// true because the data was bound to
+                                        // the view
+
+                        }
+                        return false;
+                    }
+                });
         mContactsListView.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> a, View v, int position,
                     long id) {
                 // TODO Auto-generated method stub
+                if (null != mPreListViewItemClick
+                        && mPreItemClickPosition != position)
+                    mPreListViewItemClick.setBackgroundColor(Color.TRANSPARENT);
 
                 int contactId = getContactId((Cursor) mSimpleCursorAdapter
                         .getItem(position));
-                Log.e(TAG, "contactID: " + contactId);
+                if (mIsLog)
+                    Log.e(TAG, "contactID: " + contactId);
                 String rowId = getContactRowId(contactId);
+                if (mIsLog)
+                    Log.e(TAG, "rowId: " + rowId);
 
-                Log.e(TAG, "rowId: " + rowId);
+                mItemClickPosition = position;
+                // mPreListViewItemClick = v;
+
                 mCallback.onItemSelected(position, rowId);
-
             }
         });
         mContactsListView
                 .setOnItemLongClickListener(new OnItemLongClickListener() {
                     public boolean onItemLongClick(AdapterView<?> parent,
                             View view, int position, long id) {
+                        if (null != mPreListViewItemClick
+                                && mPreItemClickPosition != position)
+                            mPreListViewItemClick
+                                    .setBackgroundColor(Color.TRANSPARENT);
+
                         Cursor cursor = (Cursor) mSimpleCursorAdapter
                                 .getItem(position);
                         int contactId = getContactId(cursor);
-                        Log.e(TAG, "contactID: " + contactId);
+                        if (mIsLog)
+                            Log.e(TAG, "contactID: " + contactId);
                         String rowId = getContactRowId(contactId);
-                        Log.e(TAG, "rowId: " + rowId);
+                        if (mIsLog)
+                            Log.e(TAG, "rowId: " + rowId);
+                        mCallback.onItemSelected(position, rowId);
                         String name = getContactDisplayName(cursor);
-                        String preContactRowId = null ;
-                        if( position > 0){
+                        String preContactRowId = null;
+                        int prePosition = -1;
+                        if (position > 0) {
+                            prePosition = position - 1;
                             int preContactId = getContactId((Cursor) mSimpleCursorAdapter
-                                    .getItem(position-1));
+                                    .getItem(prePosition));
                             preContactRowId = getContactRowId(preContactId);
-                        }else if(0 == position && 0 != cursor.getCount()){
+                        } else if (0 == position && 0 != cursor.getCount()) {
+                            prePosition = position + 1;
                             int preContactId = getContactId((Cursor) mSimpleCursorAdapter
-                                    .getItem(position+1));
+                                    .getItem(prePosition));
                             preContactRowId = getContactRowId(preContactId);
                         }
-                        
-                        contactDialog(name, rowId,
-                                position,preContactRowId).show();
+
+                        contactDialog(name, rowId, position, preContactRowId,
+                                prePosition).show();
                         return true;
                     }
                 });
+        if (savedInstanceState != null) {
+            mItemClickPosition = savedInstanceState.getInt(ITEM_CLICK_POSITION,
+                    -1);
+            if (mIsLog)
+                Log.e(TAG, "mItemClickPosition: " + mItemClickPosition);
+
+        }
         mLoadermanager.initLoader(1, null, this);
-      
+
+    }
+
+    @Override
+    public void onStart() {
+        // TODO Auto-generated method stub
+        super.onStart();
+        if (mIsLog)
+            Log.e(TAG, "onStart...");
     }
 
     @Override
     public void onResume() {
         // TODO Auto-generated method stub
         super.onResume();
-        Log.e(TAG, "onResume...");
+        if (mIsLog)
+            Log.e(TAG, "onResume...");
+        if (null != mContactsListView && -1 != mItemClickPosition) {
+            if (mIsLog)
+                Log.v(TAG, "mItemClickPosition: " + mItemClickPosition);
+            // mContactsListView.setSelection(mItemClickPosition);
+            // setCheckedItemBackground(mItemClickPosition);
+
+        }
+        // if(null != mContactsListView && -1 != mItemClickPosition){
+        // setCheckedItemBackground(mItemClickPosition);
+        // Log.v(TAG, "null != mContactsListView && -1 != mItemClickPosition");
+        //
+        // }
 
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
         // TODO Auto-generated method stub
-        String[] projection = new String[] { ContactsContract.Contacts._ID,
-                ContactsContract.Contacts.DISPLAY_NAME };
-        mCursorLoader = new CursorLoader(getActivity(),
-                ContactsContract.Contacts.CONTENT_URI, projection, null, null,
-                ContactsContract.Contacts.DISPLAY_NAME
+        String[] projection = new String[] { Contacts._ID,
+                Contacts.DISPLAY_NAME, Contacts.PHOTO_ID };
+        mCursorLoader = new CursorLoader(getActivity(), Contacts.CONTENT_URI,
+                projection, null, null, Contacts.DISPLAY_NAME
                         + " COLLATE LOCALIZED ASC");
         return mCursorLoader;
 
@@ -182,32 +277,43 @@ public class ContactsListFragment extends Fragment implements
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         // TODO Auto-generated method stub
-        if (mSimpleCursorAdapter != null && cursor != null)
+        if (mSimpleCursorAdapter != null && cursor != null) {
             mSimpleCursorAdapter.swapCursor(cursor); // swap the new cursor
                                                      // in.
-        else
-            Log.v(TAG, "OnLoadFinished: mSimpleCursorAdapter is null");
-
+        } else {
+            if (mIsLog)
+                Log.v(TAG, "OnLoadFinished: mSimpleCursorAdapter is null");
+        }
+        if (mIsLog)
+            Log.v(TAG, "OnLoadFinished...");
+        if (null != mContactsListView && -1 != mItemClickPosition) {
+            setCheckedItemBackground(mItemClickPosition);
+        }
+        // View v = getViewByPosition(mItemClickPosition, mContactsListView);
+        // Log.v(TAG, "null != mContactsListView && -1 != mItemClickPosition");
+        // if (null != v) {
+        // v.setBackgroundResource(R.color.red);
+        // Log.v(TAG, "null != v mItemClickPosition: "
+        // + mItemClickPosition);
+        // }
+        // }
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> arg0) { //??
+    public void onLoaderReset(Loader<Cursor> arg0) { // when onBackPressed
         // TODO Auto-generated method stub
+        // Log.v(TAG, "onLoaderReset...");
+        mSimpleCursorAdapter.swapCursor(null);
 
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        Log.e(TAG, "onCreateOptionsMenu...");
+        if (mIsLog)
+            Log.e(TAG, "onCreateOptionsMenu...");
         // TODO Auto-generated method stub
         inflater.inflate(R.menu.main, menu);
         super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        // TODO Auto-generated method stub
-        super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -227,7 +333,8 @@ public class ContactsListFragment extends Fragment implements
     public void onPause() {
         // TODO Auto-generated method stub
         super.onPause();
-        Log.e(TAG, "onPause...");
+        if (mIsLog)
+            Log.e(TAG, "onPause...");
 
     }
 
@@ -235,14 +342,17 @@ public class ContactsListFragment extends Fragment implements
     public void onStop() {
         // TODO Auto-generated method stub
         super.onStop();
-        Log.e(TAG, "onStop...");
+        if (mIsLog)
+            Log.e(TAG, "onStop...");
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         // TODO Auto-generated method stub
         super.onSaveInstanceState(outState);
-        Log.e(TAG, "onSaveInstanceState...");
+        if (mIsLog)
+            Log.e(TAG, "onSaveInstanceState...");
+        outState.putInt(ITEM_CLICK_POSITION, mItemClickPosition);
     }
 
     public int getContactId(Cursor cursor) {
@@ -269,23 +379,9 @@ public class ContactsListFragment extends Fragment implements
                 .getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
     }
 
-//    public void initContactsListFragment() {
-//        if (mContext != null) {
-//            // new Thread(mLoadContactsListRunnable).start();
-//            // if(!mThreadLoadContactsList.isInterrupted()){
-//            // mThreadLoadContactsList.interrupt();
-//            // }
-//            // mThreadLoadContactsList.start();
-//            // mContacts = ContactsImplement.fetchContacts(mContext);
-//        } else
-//            Log.e(TAG, "mContext==null");
-//
-//        // setContactsListFragment();
-//
-//    }
-
     public Dialog contactDialog(String name, final String rowId,
-            final int position, final String preContactRowId) {
+            final int position, final String preContactRowId,
+            final int prePosition) {
         Dialog dialog = new Dialog(mContext);
         Builder builder = new AlertDialog.Builder(mContext);
         builder.setTitle(name);
@@ -296,14 +392,47 @@ public class ContactsListFragment extends Fragment implements
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
 
-                        if (mCallback != null)
+                        if (null != mCallback) {
                             mCallback.onContactDialogSelected(item, rowId,
-                                    position,preContactRowId);
+                                    position, preContactRowId);
+                            if (1 == item) {
+                                Log.e(TAG, "prePosition: " + prePosition);
+
+                                mPreItemClickPosition = prePosition;
+                                // mContactsListView.setSelection(prePosition);
+                                setCheckedItemBackground(prePosition);
+                            }
+                        }
 
                     }
                 });
         dialog = builder.create();
         return dialog;
+    }
+
+    public void setCheckedItemBackground(int pos) {
+
+        View v = getViewByPosition(pos, mContactsListView);
+        if (null != v) {
+            if (mIsLog)
+                Log.e(TAG, "setCheckedItemBackground: null != v");
+            v.setBackgroundResource(R.color.purple_list_item);
+            mPreListViewItemClick = v;
+        }
+
+    }
+
+    public View getViewByPosition(int pos, ListView listView) {
+        final int firstListItemPosition = listView.getFirstVisiblePosition();
+        final int lastListItemPosition = firstListItemPosition
+                + listView.getChildCount() - 1;
+
+        if (pos < firstListItemPosition || pos > lastListItemPosition) {
+            return listView.getAdapter().getView(pos, null, listView);
+        } else {
+            final int childIndex = pos - firstListItemPosition;
+            return listView.getChildAt(childIndex);
+        }
     }
 
     public class ContactsListViewAdapter extends BaseAdapter {
@@ -371,7 +500,7 @@ public class ContactsListFragment extends Fragment implements
     public void onDestroy() {
         // TODO Auto-generated method stub
         super.onDestroy();
-       
+
     }
 
 }

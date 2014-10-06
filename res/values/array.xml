@@ -4,4 +4,13 @@
         <item>Edit Contact</item>  
         <item>Delete Contact</item>  
     </string-array> 
+    <string-array name="photoSelection">  
+        <item>Take photo</item>  
+        <item>Choose photo from Gallery</item>  
+    </string-array>
+    <string-array name="photoExistSelection">  
+        <item>Take new photo</item>
+        <item>Choose new photo from Gallery</item> 
+        <item>Remove photo</item>  
+    </string-array> 
 </resources>

@@ -18,6 +18,8 @@ public final class R {
     }
     public static final class array {
         public static final int contactChoice=0x7f0c0000;
+        public static final int photoExistSelection=0x7f0c0002;
+        public static final int photoSelection=0x7f0c0001;
     }
     public static final class attr {
         /**  Custom divider drawable to use for elements in the action bar. 
@@ -861,13 +863,16 @@ containing a value of this type.
         public static final int abc_split_action_bar_is_narrow=0x7f060002;
     }
     public static final class color {
-        public static final int abc_search_url_text_holo=0x7f070007;
+        public static final int abc_search_url_text_holo=0x7f07000a;
         public static final int abc_search_url_text_normal=0x7f070000;
         public static final int abc_search_url_text_pressed=0x7f070002;
         public static final int abc_search_url_text_selected=0x7f070001;
         public static final int blue=0x7f070003;
         public static final int green=0x7f070006;
         public static final int grey=0x7f070004;
+        public static final int orange=0x7f070009;
+        public static final int purple_list_item=0x7f070008;
+        public static final int purple_theme=0x7f070007;
         public static final int red=0x7f070005;
     }
     public static final class dimen {
@@ -1084,22 +1089,24 @@ containing a value of this type.
         public static final int abc_textfield_searchview_holo_light=0x7f020054;
         public static final int abc_textfield_searchview_right_holo_dark=0x7f020055;
         public static final int abc_textfield_searchview_right_holo_light=0x7f020056;
-        public static final int ic_action_discard=0x7f020057;
-        public static final int ic_action_edit=0x7f020058;
-        public static final int ic_action_user_add=0x7f020059;
-        public static final int ic_launcher=0x7f02005a;
+        public static final int contacts_list_item_bg=0x7f020057;
+        public static final int ic_action_discard=0x7f020058;
+        public static final int ic_action_edit=0x7f020059;
+        public static final int ic_action_user_add=0x7f02005a;
+        public static final int ic_launcher=0x7f02005b;
+        public static final int ic_person_default=0x7f02005c;
     }
     public static final class id {
-        public static final int ContactsEmail=0x7f050046;
-        public static final int ContactsEmailString=0x7f050045;
-        public static final int ContactsName=0x7f050040;
-        public static final int ContactsPhoneNum=0x7f050043;
-        public static final int ContactsPhoneNumString=0x7f050042;
-        public static final int actionAddContact=0x7f050052;
-        public static final int actionDelete=0x7f05004f;
-        public static final int actionEdit=0x7f05004e;
-        public static final int actionEditcancel=0x7f050051;
-        public static final int actionEditdone=0x7f050050;
+        public static final int ContactsEmail=0x7f050047;
+        public static final int ContactsEmailString=0x7f050046;
+        public static final int ContactsName=0x7f050041;
+        public static final int ContactsPhoneNum=0x7f050044;
+        public static final int ContactsPhoneNumString=0x7f050043;
+        public static final int actionAddContact=0x7f050056;
+        public static final int actionDelete=0x7f050053;
+        public static final int actionEdit=0x7f050052;
+        public static final int actionEditcancel=0x7f050055;
+        public static final int actionEditdone=0x7f050054;
         public static final int action_bar=0x7f05001c;
         public static final int action_bar_activity_content=0x7f050015;
         public static final int action_bar_container=0x7f05001b;
@@ -1119,16 +1126,19 @@ containing a value of this type.
         public static final int contact_list_fragment=0x7f05003d;
         public static final int container=0x7f05003c;
         public static final int default_activity_button=0x7f050028;
+        public static final int detailContactsPhoto=0x7f050040;
         public static final int detail_fragment=0x7f05003e;
         public static final int dialog=0x7f05000e;
         public static final int disableHome=0x7f050008;
         public static final int dropdown=0x7f05000f;
-        public static final int editEmail=0x7f05004c;
-        public static final int editName=0x7f050048;
-        public static final int editPhoneNum=0x7f05004a;
-        public static final int editViewEmail=0x7f05004b;
-        public static final int editViewName=0x7f050047;
-        public static final int editViewPhoneNum=0x7f050049;
+        public static final int editEmail=0x7f05004f;
+        public static final int editName=0x7f05004b;
+        public static final int editPhoneNum=0x7f05004d;
+        public static final int editViewEmail=0x7f05004e;
+        public static final int editViewLinearLayout1=0x7f050048;
+        public static final int editViewName=0x7f05004a;
+        public static final int editViewPhoneNum=0x7f05004c;
+        public static final int editViewPhoto=0x7f050049;
         public static final int edit_query=0x7f050030;
         public static final int end=0x7f050013;
         public static final int expand_activities_button=0x7f050026;
@@ -1138,11 +1148,12 @@ containing a value of this type.
         public static final int icon=0x7f05002a;
         public static final int ifRoom=0x7f05000a;
         public static final int image=0x7f050027;
-        public static final int linearLayout=0x7f050041;
-        public static final int linearLayout2=0x7f050044;
+        public static final int linearLayout=0x7f050042;
+        public static final int linearLayout2=0x7f050045;
         public static final int listMode=0x7f050001;
         public static final int listViewContacts=0x7f05003f;
-        public static final int listViewContactsName=0x7f05004d;
+        public static final int listViewContactsName=0x7f050051;
+        public static final int listViewContactsPhoto=0x7f050050;
         public static final int list_item=0x7f050029;
         public static final int middle=0x7f050012;
         public static final int never=0x7f050009;

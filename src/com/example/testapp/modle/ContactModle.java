@@ -1,7 +1,7 @@
 package com.example.testapp.modle;
 
 public class ContactModle {
-    private String mId;
+    private String mId; //Row_ID
     private String mContactName;
     private String mContactPhoneNum;
     private String mContactEmail;

@@ -6,6 +6,7 @@ import com.example.testapp.UpdateContactActivity;
 import com.example.testapp.modle.ContactModle;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -15,18 +16,21 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class DetailFragment extends Fragment {
     private static final String TAG = "DetailFragment";
     public final static String FRG2_CONTACT_ID = "contactId";
     String mCurrentPositionID = null;
+    private static Boolean mIsLog = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
-        Log.e(TAG, "onCreate...");
+        if (mIsLog)
+            Log.e(TAG, "onCreate...");
         setHasOptionsMenu(true);
 
     }
@@ -48,15 +52,17 @@ public class DetailFragment extends Fragment {
     public void onStart() {
         // TODO Auto-generated method stub
         super.onStart();
-        Log.e(TAG, "onStart...");
+        if (mIsLog)
+            Log.e(TAG, "onStart...");
         Bundle args = getArguments();
         if (args != null) {
-            Log.e(TAG, "args != null");
+            if (mIsLog)
+                Log.e(TAG, "args != null");
             String id = args.getString(FRG2_CONTACT_ID);
             updateFrag2View(-1, ContactsImplement.getContact(getActivity(), id));
         } else if (mCurrentPositionID != null) {
-
-            Log.e(TAG, mCurrentPositionID);
+            if (mIsLog)
+                Log.e(TAG, mCurrentPositionID);
             updateFrag2View(-1, ContactsImplement.getContact(getActivity(),
                     mCurrentPositionID));
         }
@@ -66,7 +72,8 @@ public class DetailFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // TODO Auto-generated method stub
         if (!MainActivity.mIsLargeScreen) {
-            Log.e(TAG, "onCreateOptionsMenu...");
+            if (mIsLog)
+                Log.e(TAG, "onCreateOptionsMenu...");
 
             inflater.inflate(R.menu.contact_choice, menu);
         }
@@ -76,7 +83,8 @@ public class DetailFragment extends Fragment {
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         // TODO Auto-generated method stub
-        Log.e(TAG, "onPrepareOptionsMenu...");
+        if (mIsLog)
+            Log.e(TAG, "onPrepareOptionsMenu...");
         super.onPrepareOptionsMenu(menu);
     }
 
@@ -85,14 +93,16 @@ public class DetailFragment extends Fragment {
         // TODO Auto-generated method stub
         switch (item.getItemId()) {
         case R.id.actionDelete:
-            Log.e(TAG, "action Delete");
+            if (mIsLog)
+                Log.e(TAG, "action Delete");
             ContactsImplement.deleteContact(getActivity(), mCurrentPositionID);
-            //MainActivity.mContactsListFragment.initContactsListFragment();
+            // MainActivity.mContactsListFragment.initContactsListFragment();
             getActivity().getSupportFragmentManager().popBackStack();
 
             break;
         case R.id.actionEdit:
-            Log.e(TAG, "action Edit");
+            if (mIsLog)
+                Log.e(TAG, "action Edit");
             Intent i = new Intent(getActivity(), UpdateContactActivity.class);
             i.putExtra("id", mCurrentPositionID);
             startActivityForResult(i, MainActivity.UPDATECONTACTCODE);
@@ -105,14 +115,29 @@ public class DetailFragment extends Fragment {
     }
 
     public void updateFrag2View(int position, ContactModle cm) {
-
+        ImageView photo = (ImageView) getActivity().findViewById(
+                R.id.detailContactsPhoto);
         TextView name = (TextView) getActivity()
                 .findViewById(R.id.ContactsName);
         TextView phoneNum = (TextView) getActivity().findViewById(
                 R.id.ContactsPhoneNum);
         TextView email = (TextView) getActivity().findViewById(
                 R.id.ContactsEmail);
-        if (cm != null) {
+
+        Bitmap image = ContactsImplement.queryContactImage(getActivity(),
+                ContactsImplement.getPhotoId(getActivity(), cm.getId()));
+
+        // Log.v(TAG, "cm.getId(): " + cm.getId());
+        if (null != image) {
+            photo.setImageBitmap(image);
+            if (mIsLog)
+                Log.v(TAG, "null != image");
+        } else {
+            if (mIsLog)
+                Log.v(TAG, "null == image");
+            photo.setImageResource(R.drawable.ic_person_default);
+        }
+        if (null != cm) {
             // Log.e(TAG, "ContactModle c!=null");
             name.setText(cm.getContactName());
             phoneNum.setText(cm.getContactPhoneNum());
@@ -120,7 +145,8 @@ public class DetailFragment extends Fragment {
             // Log.e(TAG, c.getContactPhoneNum());
             mCurrentPositionID = cm.getId();
         } else {
-            Log.e(TAG, "ContactModle c==null");
+            if (mIsLog)
+                Log.e(TAG, "ContactModle c==null");
             name.setText("");
             phoneNum.setText("");
             email.setText("");

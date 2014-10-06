@@ -4,25 +4,45 @@
     android:layout_height="match_parent" >
 
     <LinearLayout
+        android:id="@+id/editViewLinearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dip"
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:id="@+id/editViewPhoto"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginBottom="3dip"
+            android:layout_marginLeft="6dip"
+            android:layout_marginTop="3dip"
+            android:gravity="center"
+            android:src="@drawable/ic_person_default" />
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical" >
+        android:orientation="vertical" 
+        android:paddingTop="90dp"
+        >
 
         <TextView
             android:id="@+id/editViewName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/name"
-            android:textStyle="bold"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/editName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:focusable="true" 
-            android:focusableInTouchMode="true"
             android:ems="10"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:inputType="text" >
 
             <requestFocus />
@@ -33,15 +53,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/phoneNum"
-            android:textStyle="bold"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/editPhoneNum"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:inputType="phone" >"
+            android:inputType="phone" >
+"
 
             <requestFocus />
         </EditText>
@@ -51,8 +72,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/email"
-            android:textStyle="bold"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/editEmail"

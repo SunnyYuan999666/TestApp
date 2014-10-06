@@ -4,5 +4,7 @@
 	<color name="grey">#ff808080</color>
 	<color name="red">#e00606</color>
 	<color name="green">#009d28</color>
-    
+	<color name="purple_theme">#9C7ABC</color>
+    <color name="purple_list_item">#8F19FF</color>
+    <color name="orange">#FA8000</color>
 </resources>
