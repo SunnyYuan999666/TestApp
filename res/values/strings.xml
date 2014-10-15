@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">TestApp</string>
+    <string name="app_name">ContactsApp</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="email">Email</string>
@@ -10,7 +10,7 @@
     <string name="action_addContact">+</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_done">Done</string>
-    <string name="coming_phone_no">Incoming no:</string>
+    <string name="coming_phone_no">Incoming No:</string>
     <string name="action_edit_contact">Edit</string>
     <string name="action_delete_contact">Delete</string>
 

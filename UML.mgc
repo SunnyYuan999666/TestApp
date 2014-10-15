@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ClassDiagram>
+    <Class name="com.example.contactsapp.MainActivity" x="481" y="30">
+        <AttributesDisplayFilter public-accepted="true"
+            private-accepted="true" protected-accepted="true"
+            default-accepted="true" static-accepted="false"/>
+        <MethodDisplayFilter public-accepted="true"
+            private-accepted="false" protected-accepted="false"
+            default-accepted="false" static-accepted="false"
+            accessors-accepted="false" constructors-accepted="false"/>
+        <Extension destinationClassName="com.example.contactsapp.fragment.ContactsListFragment.OnHeadlineSelectedListener"/>
+        <Association
+            destinationClassName="com.example.contactsapp.fragment.ContactsListFragment"
+            endpointName="mContactsListFragment" kind="Simple"/>
+        <Communication destinationClassName="com.example.contactsapp.fragment.ContactsImplement"/>
+        <Communication destinationClassName="com.example.contactsapp.fragment.ContactsListFragment"/>
+    </Class>
+    <Class name="com.example.contactsapp.UpdateContactActivity" x="305" y="500">
+        <AttributesDisplayFilter public-accepted="true"
+            private-accepted="true" protected-accepted="true"
+            default-accepted="true" static-accepted="false"/>
+        <MethodDisplayFilter public-accepted="true"
+            private-accepted="false" protected-accepted="false"
+            default-accepted="false" static-accepted="false"
+            accessors-accepted="false" constructors-accepted="false"/>
+        <Communication destinationClassName="com.example.contactsapp.fragment.ContactsImplement"/>
+        <Communication destinationClassName="com.example.caontactsapp.modle.ContactModle"/>
+    </Class>
+    <Class name="com.example.contactsapp.IncomingCallReceiver" x="619" y="598">
+        <AttributesDisplayFilter public-accepted="true"
+            private-accepted="true" protected-accepted="true"
+            default-accepted="true" static-accepted="false"/>
+        <MethodDisplayFilter public-accepted="true"
+            private-accepted="false" protected-accepted="false"
+            default-accepted="false" static-accepted="false"
+            accessors-accepted="false" constructors-accepted="false"/>
+    </Class>
+    <Class name="com.example.contactsapp.InsertContactActivity" x="11" y="445">
+        <AttributesDisplayFilter public-accepted="true"
+            private-accepted="true" protected-accepted="true"
+            default-accepted="true" static-accepted="false"/>
+        <MethodDisplayFilter public-accepted="true"
+            private-accepted="false" protected-accepted="false"
+            default-accepted="false" static-accepted="false"
+            accessors-accepted="false" constructors-accepted="false"/>
+        <Communication destinationClassName="com.example.contactsapp.fragment.ContactsImplement"/>
+        <Communication destinationClassName="com.example.caontactsapp.modle.ContactModle"/>
+    </Class>
+    <Class name="com.example.contactsapp.fragment.ContactsImplement"
+        x="713" y="277">
+        <AttributesDisplayFilter public-accepted="true"
+            private-accepted="true" protected-accepted="true"
+            default-accepted="true" static-accepted="false"/>
+        <MethodDisplayFilter public-accepted="true"
+            private-accepted="false" protected-accepted="false"
+            default-accepted="false" static-accepted="false"
+            accessors-accepted="false" constructors-accepted="false"/>
+        <Communication destinationClassName="com.example.caontactsapp.modle.ContactModle"/>
+    </Class>
+    <Class
+        name="com.example.contactsapp.IncomingCallReceiver.MyPhoneStateListener"
+        x="606" y="520">
+        <AttributesDisplayFilter public-accepted="true"
+            private-accepted="true" protected-accepted="true"
+            default-accepted="true" static-accepted="false"/>
+        <MethodDisplayFilter public-accepted="true"
+            private-accepted="false" protected-accepted="false"
+            default-accepted="false" static-accepted="false"
+            accessors-accepted="false" constructors-accepted="false"/>
+    </Class>
+    <Class name="com.example.contactsapp.NotificationService" x="550" y="279">
+        <AttributesDisplayFilter public-accepted="true"
+            private-accepted="true" protected-accepted="true"
+            default-accepted="true" static-accepted="false"/>
+        <MethodDisplayFilter public-accepted="true"
+            private-accepted="false" protected-accepted="false"
+            default-accepted="false" static-accepted="false"
+            accessors-accepted="false" constructors-accepted="false"/>
+        <Communication destinationClassName="com.example.contactsapp.fragment.ContactsImplement"/>
+    </Class>
+    <Class name="com.example.caontactsapp.modle.ContactModle" x="738" y="348">
+        <AttributesDisplayFilter public-accepted="true"
+            private-accepted="true" protected-accepted="true"
+            default-accepted="true" static-accepted="false"/>
+        <MethodDisplayFilter public-accepted="true"
+            private-accepted="false" protected-accepted="false"
+            default-accepted="false" static-accepted="false"
+            accessors-accepted="false" constructors-accepted="false"/>
+    </Class>
+    <Class
+        name="com.example.contactsapp.fragment.ContactsListFragment.OnHeadlineSelectedListener"
+        x="395" y="390">
+        <AttributesDisplayFilter public-accepted="true"
+            private-accepted="true" protected-accepted="true"
+            default-accepted="true" static-accepted="false"/>
+        <MethodDisplayFilter public-accepted="true"
+            private-accepted="false" protected-accepted="false"
+            default-accepted="false" static-accepted="false"
+            accessors-accepted="false" constructors-accepted="false"/>
+    </Class>
+    <Class name="com.example.contactsapp.fragment.ContactsListFragment"
+        x="12" y="80">
+        <AttributesDisplayFilter public-accepted="true"
+            private-accepted="true" protected-accepted="true"
+            default-accepted="true" static-accepted="false"/>
+        <MethodDisplayFilter public-accepted="true"
+            private-accepted="false" protected-accepted="false"
+            default-accepted="false" static-accepted="false"
+            accessors-accepted="false" constructors-accepted="false"/>
+        <Association
+            destinationClassName="com.example.contactsapp.fragment.ContactsListFragment.OnHeadlineSelectedListener"
+            endpointName="mCallback" kind="Simple"/>
+        <Communication destinationClassName="com.example.contactsapp.fragment.ContactsImplement"/>
+        <Communication destinationClassName="com.example.contactsapp.fragment.ContactsListFragment.OnHeadlineSelectedListener"/>
+    </Class>
+</ClassDiagram>
