@@ -2,23 +2,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    tools:context="com.example.contactsapp.MainActivity"
+    tools:context="com.example.testapp.MainActivity"
     tools:ignore="MergeRootFrame" >
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal" >
+
         <fragment
             android:id="@+id/contact_list_fragment"
-            android:name="com.example.contactsapp.fragment.ContactsListFragment"
+            android:name="com.example.testapp.fragment.ContactsListFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="2" />
+
         <fragment
             android:id="@+id/detail_fragment"
-            android:name="com.example.contactsapp.fragment.DetailFragment"
+            android:name="com.example.testapp.fragment.DetailFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1" />
     </LinearLayout>
+
 </FrameLayout>
